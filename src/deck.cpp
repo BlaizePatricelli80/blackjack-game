@@ -6,9 +6,9 @@
 
 
 
-Deck::Deck()
+Deck::Deck() // Initialize the deck with 52 cards
 {
-  Texture2D cardSpriteSheet = LoadTexture("textures/CardSpriteSheet.png");
+  Texture2D cardSpriteSheet = LoadTexture("../textures/CardSpriteSheet.png");
 
   const int CARD_WIDTH = 144;
   const int CARD_HEIGHT = 221;
@@ -77,7 +77,7 @@ Node* getNodeAt(int i)
   return cur;
 }
 
-Card Deck::drawCard()
+Card Deck::drawCard() // Takes a card from the top of the deck
 {
   if(!tail)
   {
@@ -116,4 +116,14 @@ void Deck::shuffleDeck()
 
     std::swap(nodeI->card, nodeJ->card);
   }
+}
+
+// Render the deck
+void Deck::drawDeck()
+{
+  float width = 20;
+  float height = (float)GetScreenHeight()/2;
+  Texture2D texture = LoadTexture("../textures/CardSpriteSheet.png");
+  DrawTextureRec(texture, head->card.getRect(), {width, height}, NULL);
+
 }

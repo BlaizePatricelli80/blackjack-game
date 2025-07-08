@@ -12,7 +12,8 @@ class Deck
   public:
     Deck();
     void addCard(const Card& card);
-    Card drawCard();
+    Card drawCard(); // Takes a card from the top of the deck
+    void drawDeck(); // Render the deck(but only have to draw the top card)
     Node* getNodeAt(int i);
     void shuffleDeck();
 

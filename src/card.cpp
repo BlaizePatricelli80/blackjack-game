@@ -1,3 +1,4 @@
+#include "raylib.h"
 #include "card.h"
 
 
@@ -15,4 +16,14 @@ float Card::getX() const
 float Card::getY() const
 {
   return pos.y;
+}
+
+int Card::getValue() const
+{
+  return value;
+}
+
+Rectangle Card::getRect() const
+{
+  return rect;
 }
