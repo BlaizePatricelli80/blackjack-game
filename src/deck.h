@@ -1,20 +1,22 @@
-#pragma once 
-#include "node.h"
+#pragma once
 
+#include <vector>
+#include <optional>
+#include <random>
+#include "card.h"
 
 class Deck
 {
   private:
-    Node* head;
-    Node* tail;
-
+    std::vector<Card> cards;
+    static std::mt19937 rng;  
 
   public:
-    Deck();
-    void addCard(const Card& card);
-    Card drawCard(); // Takes a card from the top of the deck
-    void drawDeck(); // Render the deck(but only have to draw the top card)
-    Node* getNodeAt(int i);
-    void shuffleDeck();
+    void addCard(const Card& card); 
+    [[nodiscard]] std::optional<Card> takeCard(); // Deck might be empty - can return an optional incase
+    void populateDeck();
+    void shuffle();
+    Card peekTop() const;
 
-}
+    [[nodiscard]] const std::vector<Card>& getCards() const;
+};

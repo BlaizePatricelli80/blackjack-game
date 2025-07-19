@@ -1,129 +1,63 @@
-#include "raylib.h"
+#include <algorithm>
+#include <random>
+#include <cassert>
+#include "utility.h"
 #include "deck.h"
-#include <cstdlib> // For srand and rand
-#include <ctime>   // For time
 
 
+using utility::log;
 
-
-Deck::Deck() // Initialize the deck with 52 cards
-{
-  Texture2D cardSpriteSheet = LoadTexture("../textures/CardSpriteSheet.png");
-
-  const int CARD_WIDTH = 144;
-  const int CARD_HEIGHT = 221;
-
-  int heightMin = 0;
-  int widthMin = 0;
-
-  
-  for(int i = 1; i < 53; i++)
-  {
-
-    int rank = (i - 1) % 13 + 1; // 1-13
-    int value = (rank > 10) ? 10 : rank;
-    if(rank == 1) value = 11; // ace
-
-    Rectangle source = {
-      (float) widthMin,
-      (float) heightMin,
-      (float) CARD_WIDTH,
-      (float) CARD_HEIGHT
-    }
-
-    Vector2 position = { 100.0f, 100.0f };
-    Card card(position, source, value);
-    addCard(card);
-    
-
-    if( i % 13 == 0) // If at the end of the card row v 
-    {
-      heightMin += CARD_HEIGHT;
-      widthMin = 0;
-    }
-    else
-    {
-      widthMin += CARD_WIDTH;
-    }
-
-  }
+std::mt19937 Deck::rng{ std::random_device{}() };
 
 void Deck::addCard(const Card& card)
 {
-  Node* node = new Node(card, NULL, NULL);
-  if(head == NULL)
-  {
-    head = node
-    tail = node;
-    
-  }
-  else
-  {
-    tail->next = node;
-    node->prev = tail;
-    tail = node;
-  }
-
+  cards.push_back(card);
 }
 
-Node* getNodeAt(int i)
+std::optional<Card> Deck::takeCard()
 {
-  Node* cur = head;
-  for(int j = 0; j < i; j++)
+  
+  if(cards.empty())
   {
-    cur = cur->next;
+    log("trying to pop cards from empty vector");
+    return std::nullopt;
   }
-
-  return cur;
-}
-
-Card Deck::drawCard() // Takes a card from the top of the deck
-{
-  if(!tail)
-  {
-    return Card();
-  }
-
-  Node* current = tail;
-  if(tail->prev != NULL)
-  {
-    tail = tail->prev;
-    tail->next = NULL;
-  }
-  else
-  {
-    // List is empty now
-    tail = NULL;
-    head = NULL; 
-  }
-
-
-  Card card = current->card;
-  delete(current);
-  current = nullptr;
+  Card card = peekTop();
+  cards.pop_back();
 
   return card;
 }
 
-void Deck::shuffleDeck()
+void Deck::populateDeck()
 {
-  srand(time(NULL));
-  for(int i = 51; i > 0; i--)
-  {
-    int j = rand() % ( i + 1 );
-    Node* nodeI = getNodeAt(i);
-    Node* nodeJ = getNodeAt(j);
 
-    std::swap(nodeI->card, nodeJ->card);
+  for(size_t suitIndex = 0; suitIndex < 4; suitIndex++)
+  {
+    Suit s = static_cast<Suit>(suitIndex);
+
+    for(size_t rankIndex = 0; rankIndex < 13; rankIndex++)
+    {
+      Rank r = static_cast<Rank>(rankIndex);
+
+      Card card(r, s);
+      addCard(card);
+    }
   }
 }
 
-// Render the deck
-void Deck::drawDeck()
+void Deck::shuffle()
 {
-  float width = 20;
-  float height = (float)GetScreenHeight()/2;
-  Texture2D texture = LoadTexture("../textures/CardSpriteSheet.png");
-  DrawTextureRec(texture, head->card.getRect(), {width, height}, NULL);
+ 
+  std::shuffle(cards.begin(), cards.end(), rng);
+}
 
+Card Deck::peekTop() const
+{
+    assert(!cards.empty() && "Peek called on empty deck");
+    return cards.back();  // Returns but doesn't remove
+}
+
+const std::vector<Card>& Deck::getCards() const // Reference is valid until deck is modified
+{
+  return cards;
 }
