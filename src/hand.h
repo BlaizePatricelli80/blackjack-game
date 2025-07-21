@@ -1,16 +1,20 @@
 #pragma once
 #include <vector>
+#include <cstddef>
 #include "card.h"
 
 
-class HandLogic
+class Hand
 {
   private:
     std::vector<Card> cards;
 
   public:
     void addCard(const Card& card);
-    static constexpr int cardValue(Rank r);
     int bestValue() const;
+    void clear();
+    std::size_t size() const;
+    bool isNatural21() const;
+    bool isPair() const;
 };
 
