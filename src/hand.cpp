@@ -18,7 +18,7 @@ int Hand::bestValue() const
     if(card.rank == Rank::Ace)
       aceCount++;
 
-    totalVal += cardValue(card.rank); 
+    totalVal += rules::cardValue(card.rank); 
   }
   
   while(totalVal <= 11 && aceCount)
@@ -42,9 +42,9 @@ bool Hand::isNatural21() const // A true blackjack comes from 2 cards adding up 
   return size() == 2 && bestValue() == BlackJack;
 }
 
-bool Hand::isPair() const
+bool Hand::isPair() const // These table rules will let the player split on any two cards with the same value
 {
-  if(size() == 2 && cardValue(cards[0].rank) == cardValue(cards[1].rank))
+  if(size() == 2 && rules::cardValue(cards[0].rank) == rules::cardValue(cards[1].rank))
   {
      return true;
   }

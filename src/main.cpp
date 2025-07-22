@@ -1,30 +1,20 @@
 #include <iostream>
+#include <cmath>
+#include "player.h"
 #include "card.h"
 #include "deck.h"
 
 
 int main()
 { 
-  Deck deck;
-  deck.populateDeck();
-  deck.shuffle();
+  Player p("Alice", 100);
+  p.bet(5);   p.payout(1.5);   std::cout << p.getChips() << '\n';  // expect 103
+  p.bet(7);   p.payout(1.5);   std::cout << p.getChips() << '\n';  // expect 110 or 111 (check rounding)
+  p.bet(5);   p.payout(0.0);   std::cout << p.getChips() << '\n';  // bankroll unchanged
+  bool ok = p.bet(200);        std::cout << ok << '\n';            // expect false 
 
-  while(true)
-  {
-    if(auto maybeCard = deck.takeCard(); maybeCard.has_value())
-    {
-      Card card = maybeCard.value();
-      
-      std::cout << "\n\n";
-      std::cout << "Card Suit - " << static_cast<int>(card.suit) << "\n";
-      std::cout << "Card Rank - " << static_cast<int>(card.rank) << "\n";
 
-    }
-    else
-    {
-      break;
-    }
-
-  }
+  double num = 7 * 1.5;
+  std::cout << std::round(num);
   return 0;
 }
